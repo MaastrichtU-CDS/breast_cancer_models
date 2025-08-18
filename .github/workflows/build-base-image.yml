@@ -1,0 +1,36 @@
+# Github Actions workflow to build the base image
+name: Build Base Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: install FAIRmodel package
+        run: |
+          pip install git+https://github.com/MaastrichtU-BISS/FAIRmodels-model-package.git#subdirectory=package
+          
+      # - name: built and push image brain_neurocognitive_decline_6month_prediction_clinical to model-format
+      #   run: |
+      #     cd Tohidinezhad[2024]-NeurocognitiveDeclineAllModels
+      #     fm-build brain_neurocognitive_decline_6month_prediction_clinical.py  ghcr.io/maastrichtu-cds/model_format/brain_neurocognitive_decline_6month_prediction_clinical:latest
+      #     docker push ghcr.io/maastrichtu-cds/model_format/brain_neurocognitive_decline_6month_prediction_clinical

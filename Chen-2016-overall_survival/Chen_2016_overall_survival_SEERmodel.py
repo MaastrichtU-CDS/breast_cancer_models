@@ -24,8 +24,8 @@ class Chen_2016_overall_survival_SEERmodel(logistic_regression):
     def _preprocess(self, data):
         def preprocess_entry(entry):
             # For hormone receptor, ensure binary integer coding (0 or 1)
-            entry['Hormone_receptor'] = int(
-                entry['Hormone_receptor'])  # 0=positive, 1=negative
+            # Should add data validation after we know the format of variables
+            entry['Hormone_receptor'] = 1.0 if entry['Hormone_receptor'] == 0 else 0  # 0=positive, 1=negative
 
             # For tumor grade, node grade and tumor size, ensure the right coding
             entry["Tumor_grade_II"] = 1.0 if entry["Tumor_grade"] == 'II' else 0.0
@@ -48,20 +48,15 @@ class Chen_2016_overall_survival_SEERmodel(logistic_regression):
         else:
             return preprocess_entry(data)
 
-    # def predict_probability(self, data):
-    #     # Preprocess input(s)
-    #     data = self._preprocess(data)
-    #
-    #     def calc_logit(entry):
-    #         lp = self._model_parameters["intercept"]
-    #         for var, weight in self._model_parameters["covariate_weights"].items():
-    #             lp += weight * entry[var]
-    #         return lp
-    #
-    #     def sigmoid(x):
-    #         return 1 / (1 + exp(-x))
-    #
-    #     if isinstance(data, list):
-    #         return [sigmoid(calc_logit(d)) for d in data]
-    #     else:
-    #         return sigmoid(calc_logit(data))
+if __name__ == "__main__":
+    model_obj = Chen_2016_overall_survival_SEERmodel()
+    model_obj.get_input_parameters()
+    print(model_obj.predict(
+        {
+            "Age": 45.6,
+            "Tumor_grade": "III",
+            "Node_grade": "2",
+            "Tumor_size": "3",
+            "Hormone_receptor": 0
+        }
+    ))

@@ -1,0 +1,13 @@
+To run the Chen-2016-overall_survival_SEERmodel
+
+docker pull ghcr.io/maastrichtu-cds/breast_cancer_models/chen_2016_overall_survival_seermodel:latest
+
+docker run --rm -p 8000:8000 ghcr.io/maastrichtu-cds/breast_cancer_models/chen_2016_overall_survival_seermodel:latest
+
+To predict: 
+
+curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '{"Age": 45.6, "Tumor_grade": "III", "Node_grade": "2", "Tumor_size": "3", "Hormone_receptor": 0}'
+
+curl http://localhost:8000/result
+
+The answer is 0.6200121980391241

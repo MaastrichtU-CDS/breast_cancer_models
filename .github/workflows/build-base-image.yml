@@ -32,5 +32,5 @@ jobs:
       - name: built and push image Chen_2016_overall_survival_SEERmodel to breast_cancer_models
         run: |
           cd Chen-2016-overall_survival
-          fm-build Chen_2016_overall_survival_SEERmodel.py  ghcr.io/maastrichtu-cds/brest_cancer_models/Chen_2016_overall_survival_SEERmodel:latest
-          docker push ghcr.io/maastrichtu-cds/brest_cancer_models/Chen_2016_overall_survival_SEERmodel
+          fm-build Chen_2016_overall_survival_SEERmodel.py ghcr.io/maastrichtu-cds/breast_cancer_models/chen_2016_overall_survival_seermodel:latest
+          docker push ghcr.io/maastrichtu-cds/breast_cancer_models/chen_2016_overall_survival_seermodel:latest

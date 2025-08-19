@@ -26,9 +26,9 @@ Input data:
 
 # To run the model
 
-docker pull ghcr.io/maastrichtu-cds/breast_cancer_models/zhang_2017_lymph_node_clinical:latest
+docker pull ghcr.io/maastrichtu-cds/breast_cancer_models/li_2011_recurrence_survival:latest
 
-docker run --rm -p 8000:8000 ghcr.io/maastrichtu-cds/breast_cancer_models/zhang_2017_lymph_node_clinical:latest
+docker run --rm -p 8000:8000 ghcr.io/maastrichtu-cds/breast_cancer_models/li_2011_recurrence_survival:latest
 
 # To predict 
 

@@ -52,11 +52,8 @@ if __name__ == "__main__":
     model_obj = Chen_2016_overall_survival_NCKUHmodel()
     model_obj.get_input_parameters()
     print(model_obj.predict(
-        {
-            "Age": 45.6,
-            "Tumor_grade": "III",
-            "Node_grade": "2",
-            "Tumor_size": "3",
-            "Hormone_receptor": 0
-        }
+        [
+            {"Age": 45.6, "Tumor_grade": "III", "Node_grade": "2", "Tumor_size": "3", "Hormone_receptor": 0},
+            {"Age": 60.2, "Tumor_grade": "II", "Node_grade": "1", "Tumor_size": "2", "Hormone_receptor": 1}
+        ]
     ))

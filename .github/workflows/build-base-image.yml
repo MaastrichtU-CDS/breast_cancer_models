@@ -29,8 +29,8 @@ jobs:
         run: |
           pip install git+https://github.com/MaastrichtU-BISS/FAIRmodels-model-package.git#subdirectory=package
           
-      # - name: built and push image brain_neurocognitive_decline_6month_prediction_clinical to model-format
-      #   run: |
-      #     cd Tohidinezhad[2024]-NeurocognitiveDeclineAllModels
-      #     fm-build brain_neurocognitive_decline_6month_prediction_clinical.py  ghcr.io/maastrichtu-cds/model_format/brain_neurocognitive_decline_6month_prediction_clinical:latest
-      #     docker push ghcr.io/maastrichtu-cds/model_format/brain_neurocognitive_decline_6month_prediction_clinical
+      - name: built and push image Chen_2016_overall_survival_SEERmodel to breast_cancer_models
+        run: |
+          cd Chen-2016-overall_survival
+          fm-build Chen_2016_overall_survival_SEERmodel.py ghcr.io/maastrichtu-cds/breast_cancer_models/chen_2016_overall_survival_seermodel:latest
+          docker push ghcr.io/maastrichtu-cds/breast_cancer_models/chen_2016_overall_survival_seermodel:latest

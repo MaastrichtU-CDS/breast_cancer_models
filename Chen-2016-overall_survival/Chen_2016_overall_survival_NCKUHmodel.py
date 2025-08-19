@@ -1,23 +1,23 @@
 from math import exp
 from model_execution import logistic_regression
 
-class Chen_2016_overall_survival_SEERmodel(logistic_regression):
+class Chen_2016_overall_survival_NCKUHmodel(logistic_regression):
     def __init__(self):
         self._model_parameters = {
             "model_uri": "https://www.omicsgroup.org/journals/validation-of-breast-cancer-survival-prediction-model-with-seer-database-2329-6771-1000174.php?aid=77460",
-            "model_name": "Chen [2016] Breast cancer - Overall Survival Prediction Model for SEER data",
-            "intercept": -6.115,
+            "model_name": "Chen [2016] Breast cancer - Overall Survival Prediction Model for NCKUH data",
+            "intercept": -4.725,
             "covariate_weights": {
-                "Age": 0.031,
-                "Tumor_grade_II": 0.549,
-                "Tumor_grade_III": 1.162,
-                "Tumor_grade_IV": 1.023,
-                "Tumor_size_2": 0.765,
-                "Tumor_size_3_4": 1.491,
-                "Node_grade_1": 0.882,
-                "Node_grade_2": 1.484,
-                "Node_grade_3": 2.161,
-                "Hormone_receptor": 1.054
+                "Age": -0.003,
+                "Tumor_grade_II": 0.975,
+                "Tumor_grade_III": 1.440,
+                "Tumor_grade_IV": 0,
+                "Tumor_size_2": 0.228,
+                "Tumor_size_3_4": 0.853,
+                "Node_grade_1": 0.921,
+                "Node_grade_2": 1.257,
+                "Node_grade_3": 1.882,
+                "Hormone_receptor": 1.001
             }
         }
 
@@ -49,7 +49,7 @@ class Chen_2016_overall_survival_SEERmodel(logistic_regression):
             return preprocess_entry(data)
 
 if __name__ == "__main__":
-    model_obj = Chen_2016_overall_survival_SEERmodel()
+    model_obj = Chen_2016_overall_survival_NCKUHmodel()
     model_obj.get_input_parameters()
     print(model_obj.predict(
         {

@@ -40,3 +40,9 @@ jobs:
       #     cd Chen-2016-overall_survival
       #     fm-build Chen_2016_overall_survival_NCKUHmodel.py ghcr.io/maastrichtu-cds/breast_cancer_models/chen_2016_overall_survival_nckuhmodel:latest
       #     docker push ghcr.io/maastrichtu-cds/breast_cancer_models/chen_2016_overall_survival_nckuhmodel:latest
+      
+      - name: built and push image Zhang_2017_lymph_node_clinical to breast_cancer_models
+        run: |
+          cd Zhang-2017-lymph-node 
+          fm-build zhang_2017_lymph_node_clinical.py ghcr.io/maastrichtu-cds/breast_cancer_models/zhang_2017_lymph_node_clinical:latest
+          docker push ghcr.io/maastrichtu-cds/breast_cancer_models/zhang_2017_lymph_node_clinical:latest

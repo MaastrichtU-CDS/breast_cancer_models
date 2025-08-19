@@ -9,3 +9,5 @@ To predict:
 curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '{"Age": 45.6, "Tumor_grade": "III", "Node_grade": "2", "Tumor_size": "3", "Hormone_receptor": 0}'
 
 curl http://localhost:8000/result
+
+The answer is 0.6200121980391241

@@ -1,3 +1,12 @@
+Outcome - overall survival
+
+Input variables for the model 
+- Age
+- Tumor grade (Bloom–Richardson system)
+- Tumor size (based on pathological reports)
+- Lymph node status
+- Hormone Receptor status (estrogen receptor (ER) status, and progesterone receptor (PR) status; 1 for negative and 0 for positive)
+
 #To run the Chen-2016-overall_survival_SEERmodel
 
 docker pull ghcr.io/maastrichtu-cds/breast_cancer_models/chen_2016_overall_survival_seermodel:latest

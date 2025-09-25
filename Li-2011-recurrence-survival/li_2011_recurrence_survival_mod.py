@@ -23,7 +23,7 @@ class li_2011_recurrence_survival(logistic_regression):
             # ensure the right coding!!!
             entry["N_positive_node_cat"] = 0 if entry["N_positive_node"] == 0 else (1 if entry["N_positive_node"] <= 3 else 2)
             entry["Tumor_grade"] = 1.0 if entry["Tumor_grade"] == 'I' else (2.0 if entry["Tumor_grade"] == 'II' else 3.0)
-            entry["Molecular_subtype"] = 1.0 if ((entry["ER"] == '1' or entry["PR"] == '1') and entry["HER2"] =='0') else 0.0 # luminal-like
+            entry["Molecular_subtype"] = 1.0 if ((entry["ER"] == 1 or entry["PR"] == 1) and entry["HER2"] ==0) else 0.0 # luminal-like
 
             return entry
 

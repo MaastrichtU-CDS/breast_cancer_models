@@ -1,7 +1,7 @@
 from math import exp
 from model_execution import logistic_regression
 
-class li_2011_recurrence_survival(logistic_regression):
+class li_2011_recurrence_survival_mod(logistic_regression):
     def __init__(self):
         self._model_parameters = {
             "model_uri": "https://doi.org/10.1245/s10434-011-1626-2",
@@ -33,14 +33,14 @@ class li_2011_recurrence_survival(logistic_regression):
             return preprocess_entry(data)
 
 if __name__ == "__main__":
-    model_obj = li_2011_recurrence_survival()
+    model_obj = li_2011_recurrence_survival_mod()
     model_obj.get_input_parameters()
     print(model_obj.predict(
         {
             "N_positive_node": 24,
             "Tumor_grade": "III",
-            "ER": "1",
-            "PR": "1",
-            "HER2": "0"
+            "ER": 1,
+            "PR": 1,
+            "HER2": 0
         }
     ))

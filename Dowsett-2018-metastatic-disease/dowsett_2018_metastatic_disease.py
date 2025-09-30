@@ -12,20 +12,63 @@ class dowsett_2018_metastatic_disease(model_execution):
         def preprocess_entry(entry):
             # For hormone receptor, ensure binary integer coding (0 or 1)
             # Should add data validation after we know the format of variables
+            allowed_values = {
+                "Tumor_grade": ['I', 'II', 'III']}
 
             # For N_positive_node, tumor grade,
             # ensure the right coding!!!
-            n = entry["N_positive_node"]
+            # n = entry["N_positive_node"]
+            # entry["N_positive_node_cat"] = (
+            #     0 if n == 0
+            #     else (1 if n == 1
+            #           else (2 if n <= 3
+            #                 else (3 if n <=9 else 4)))
+            # )
+            # entry["Tumor_grade"] = 1.0 if entry["Tumor_grade"] == 'I' else (2.0 if entry["Tumor_grade"] == 'II' else 3.0) # luminal-like
+
+            # entry["Age"]=float(entry["Age"])
+            # entry["Tumor_size"]=float(entry["Tumor_size"])
+            if "N_positive_node" not in entry:
+                raise ValueError("Missing N_positive_node")
+            try:
+                n = int(entry["N_positive_node"])
+            except ValueError:
+                raise ValueError(f"N_positive_node must be an integer, got {entry['N_positive_node']}")
+
+            entry["N_positive_node"] = n
             entry["N_positive_node_cat"] = (
                 0 if n == 0
                 else (1 if n == 1
                       else (2 if n <= 3
-                            else (3 if n <=9 else 4)))
+                            else (3 if n <= 9 else 4)))
             )
-            entry["Tumor_grade"] = 1.0 if entry["Tumor_grade"] == 'I' else (2.0 if entry["Tumor_grade"] == 'II' else 3.0) # luminal-like
 
-            entry["Age"]=float(entry["Age"])
-            entry["Tumor_size"]=float(entry["Tumor_size"])
+            # --- Tumor_grade ---
+            if "Tumor_grade" not in entry:
+                raise ValueError("Missing Tumor_grade")
+            if entry["Tumor_grade"] not in allowed_values["Tumor_grade"]:
+                raise ValueError(f"Invalid Tumor_grade value: {entry['Tumor_grade']}")
+
+            entry["Tumor_grade"] = (
+                1.0 if entry["Tumor_grade"] == 'I'
+                else (2.0 if entry["Tumor_grade"] == 'II' else 3.0)
+            )
+
+            # --- Age ---
+            if "Age" not in entry:
+                raise ValueError("Missing Age")
+            try:
+                entry["Age"] = float(entry["Age"])
+            except ValueError:
+                raise ValueError(f"Age must be numeric, got {entry['Age']}")
+
+            # --- Tumor_size ---
+            if "Tumor_size" not in entry:
+                raise ValueError("Missing Tumor_size")
+            try:
+                entry["Tumor_size"] = float(entry["Tumor_size"])
+            except ValueError:
+                raise ValueError(f"Tumor_size must be numeric, got {entry['Tumor_size']}")
 
             return entry
 
@@ -74,14 +117,14 @@ class dowsett_2018_metastatic_disease(model_execution):
                     results[f"prediction_{str(i)}"] = self._calculate_probability_single(item)
             return results
 
-# if __name__ == "__main__":
-#     model_obj = dowsett_2018_metastatic_disease()
-#     model_obj.get_input_parameters()
-#     print(model_obj.predict(
-#         {
-#             "N_positive_node": 2,
-#             "Tumor_grade": "I",
-#             "Tumor_size": "5",
-#             "Age": 56
-#         }
-#     ))
+if __name__ == "__main__":
+    model_obj = dowsett_2018_metastatic_disease()
+    model_obj.get_input_parameters()
+    print(model_obj.predict(
+        {
+            "N_positive_node": 2,
+            "Tumor_grade": "I",
+            "Tumor_size": "5",
+            "Age": 56
+        }
+    ))

@@ -54,11 +54,11 @@ jobs:
 #             fm-build li_2011_recurrence_survival.py ghcr.io/maastrichtu-cds/breast_cancer_models/li_2011_recurrence_survival:latest
 #             docker push ghcr.io/maastrichtu-cds/breast_cancer_models/li_2011_recurrence_survival:latest
 
-      # - name: built and push image dowsett_2018_metastatic_disease to breast_cancer_models
-      #   run: |
-      #        cd Dowsett-2018-metastatic-disease
-      #        fm-build dowsett_2018_metastatic_disease.py ghcr.io/maastrichtu-cds/breast_cancer_models/dowsett_2018_metastatic_disease:latest
-      #        docker push ghcr.io/maastrichtu-cds/breast_cancer_models/dowsett_2018_metastatic_disease:latest
+      - name: built and push image dowsett_2018_metastatic_disease to breast_cancer_models
+        run: |
+             cd Dowsett-2018-metastatic-disease
+             fm-build dowsett_2018_metastatic_disease.py ghcr.io/maastrichtu-cds/breast_cancer_models/dowsett_2018_metastatic_disease:latest
+             docker push ghcr.io/maastrichtu-cds/breast_cancer_models/dowsett_2018_metastatic_disease:latest
 
       # - name: built and push image corrected_v2 li_2011_recurrence_survival_mod to breast_cancer_models
       #   run: |

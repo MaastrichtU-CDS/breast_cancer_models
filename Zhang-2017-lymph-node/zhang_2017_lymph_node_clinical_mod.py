@@ -36,30 +36,15 @@ class zhang_2017_lymph_node_clinical(logistic_regression):
                 "Node_grade": [0, 1],  # adjust max nodes if needed
                 "Tumor_size_grade": ['1', '2', '3'],  # assume 1 = baseline
                 "Pathological_type": ['IDC', 'ILC', 'other'],
-                "Molecular_subtype": ['LM', 'HER2+', 'other']
+                # "Molecular_subtype": ['LM', 'HER2+', 'other']
+                "ER": ['0', '1'],  # 0 = negative, 1 = positive
+                "PR": ['0', '1'],  # 0 = negative, 1 = positive
+                "HER2": ['0', '1']  # 0 = negative, 1 = positive
             }
             # For topography (tumor location), node grade, tumor size, pathological type and molecular subtype
             # ensure the right coding!!!
-            # entry["Topography_1"] = 1.0 if entry["Topography"] == 'UIQ' else 0.0 # upper inner quadrant
-            # entry["Topography_2"] = 1.0 if entry["Topography"] == 'UOQ' else 0.0 # upper outer quadrant
-            # entry["Topography_3"] = 1.0 if entry["Topography"] == 'LIQ' else 0.0 # lower inner quadrant
-            # entry["Topography_4"] = 1.0 if entry["Topography"] == 'LOQ' else 0.0 # lower outer quadrant
-            # entry["Topography_5"] = 1.0 if entry["Topography"] == 'other' else 0.0 #
 
-            # entry["Invasive_disease"] = int(entry["Invasive_disease"])
-            # entry["Node_grade"] = int(entry["Node_grade"])
-            #
-            # entry["Tumor_size_2"] = 1.0 if entry["Tumor_size_grade"] == '2' else 0.0
-            # entry["Tumor_size_3"] = 1.0 if entry["Tumor_size_grade"] == '3' else 0.0
-
-            # entry["Pathological_type_1"] = 1.0 if entry["Pathological_type"] == 'IDC' else 0.0 # invasive ductal carcinoma
-            # entry["Pathological_type_2"] = 1.0 if entry["Pathological_type"] == 'ILC' else 0.0 # invasive lobular carcinoma
-            # entry["Pathological_type_3"] = 1.0 if entry["Pathological_type"] == 'other' else 0.0
-
-            # entry["Molecular_subtype_1"] = 1.0 if entry["Molecular_subtype"] == 'LM' else 0.0 # luminal-like
-            # entry["Molecular_subtype_2"] = 1.0 if entry["Molecular_subtype"] == 'HER2+' else 0.0 # human epidermal growth factor receptor-2
-
-            # Dose values expected as floats (gray units)
+            # Age expected as floats
             entry['Age'] = float(entry['Age'])
 
             # --- Topography ---
@@ -112,12 +97,16 @@ class zhang_2017_lymph_node_clinical(logistic_regression):
             entry["Pathological_type_3"] = 1.0 if entry["Pathological_type"] == 'other' else 0.0
 
             # --- Molecular_subtype ---
-            if "Molecular_subtype" not in entry:
-                raise ValueError("Missing Molecular_subtype")
-            if entry["Molecular_subtype"] not in allowed_values["Molecular_subtype"]:
-                raise ValueError(f"Invalid Molecular_subtype value: {entry['Molecular_subtype']}")
-            entry["Molecular_subtype_1"] = 1.0 if entry["Molecular_subtype"] == 'LM' else 0.0
-            entry["Molecular_subtype_2"] = 1.0 if entry["Molecular_subtype"] == 'HER2+' else 0.0
+            # --- ER, PR, HER2 ---
+            for marker in ["ER", "PR", "HER2"]:
+                if marker not in entry:
+                    raise ValueError(f"Missing {marker}")
+                if str(entry[marker]) not in allowed_values[marker]:
+                    raise ValueError(f"Invalid {marker} value: {entry[marker]}")
+                entry[marker] = int(entry[marker])
+
+            entry["Molecular_subtype_1"] = 1.0 if ((entry["ER"] == 1 or entry["PR"] == 1)) else 0.0
+            entry["Molecular_subtype_2"] = 1.0 if ((entry["ER"] == 0 or entry["PR"] == 0) and entry["HER2"] == 1) else 0.0
 
             return entry
 
@@ -136,7 +125,9 @@ if __name__ == "__main__":
             "Tumor_size_grade": "3",
             "Invasive_disease" : 1,
             "Topography": "UIQ",
-            "Molecular_subtype": "LM",
+            "ER": "0",
+            "PR": "1",
+            "HER2": "0",
             "Pathological_type": "ILC",
         }
     ))

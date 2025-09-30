@@ -25,19 +25,50 @@ class Chen_2016_overall_survival_SEERmodel(logistic_regression):
         def preprocess_entry(entry):
             # For hormone receptor, ensure binary integer coding (0 or 1)
             # Should add data validation after we know the format of variables
-            entry['Hormone_receptor'] = 1.0 if entry['Hormone_receptor'] == 0 else 0  # 0=positive, 1=negative
 
-            # For tumor grade, node grade and tumor size, ensure the right coding
+            allowed_values = {
+                "Hormone_receptor": ['0', '1'],  # 0 = positive, 1 = negative
+                "Tumor_grade": ['I', 'II', 'III', 'IV'],
+                "Node_grade": ['0', '1', '2', '3'],  # 0 = baseline, 1/2/3 = dummies
+                "Tumor_size_grade": ['0', '1', '2', '3', '4']  # 0–1 = baseline group
+            }
+
+            # --- Hormone receptor ---
+            if "Hormone_receptor" not in entry:
+                raise ValueError("Missing Hormone_receptor")
+            if str(entry["Hormone_receptor"]) not in allowed_values["Hormone_receptor"]:
+                raise ValueError(f"Invalid Hormone_receptor value: {entry['Hormone_receptor']}")
+
+            entry["Hormone_receptor"] = 1.0 if str(entry["Hormone_receptor"]) == '0' else 0.0 # 0=positive, 1=negative
+
+            # --- Tumor grade ---
+            if "Tumor_grade" not in entry:
+                raise ValueError("Missing Tumor_grade")
+            if entry["Tumor_grade"] not in allowed_values["Tumor_grade"]:
+                raise ValueError(f"Invalid Tumor_grade value: {entry['Tumor_grade']}")
+
             entry["Tumor_grade_II"] = 1.0 if entry["Tumor_grade"] == 'II' else 0.0
             entry["Tumor_grade_III"] = 1.0 if entry["Tumor_grade"] == 'III' else 0.0
             entry["Tumor_grade_IV"] = 1.0 if entry["Tumor_grade"] == 'IV' else 0.0
 
-            entry["Node_grade_1"] = 1.0 if entry["Node_grade"] == '1' else 0.0
-            entry["Node_grade_2"] = 1.0 if entry["Node_grade"] == '2' else 0.0
-            entry["Node_grade_3"] = 1.0 if entry["Node_grade"] == '3' else 0.0
+            # --- Node grade ---
+            if "Node_grade" not in entry:
+                raise ValueError("Missing Node_grade")
+            if str(entry["Node_grade"]) not in allowed_values["Node_grade"]:
+                raise ValueError(f"Invalid Node_grade value: {entry['Node_grade']}")
 
-            entry["Tumor_size_2"] = 1.0 if entry["Tumor_size"] == '2' else 0.0
-            entry["Tumor_size_3_4"] = 1.0 if (entry["Tumor_size"] == '3' or entry["Tumor_size"] == '4') else 0.0
+            entry["Node_grade_1"] = 1.0 if str(entry["Node_grade"]) == '1' else 0.0
+            entry["Node_grade_2"] = 1.0 if str(entry["Node_grade"]) == '2' else 0.0
+            entry["Node_grade_3"] = 1.0 if str(entry["Node_grade"]) == '3' else 0.0
+
+            # --- Tumor size ---
+            if "Tumor_size_grade" not in entry:
+                raise ValueError("Missing Tumor_size_grade")
+            if str(entry["Tumor_size_grade"]) not in allowed_values["Tumor_size_grade"]:
+                raise ValueError(f"Invalid Tumor_size_grade value: {entry['Tumor_size_grade']}")
+
+            entry["Tumor_size_2"] = 1.0 if str(entry["Tumor_size_grade"]) == '2' else 0.0
+            entry["Tumor_size_3_4"] = 1.0 if str(entry["Tumor_size_grade"]) in ('3', '4') else 0.0
 
             # Dose values expected as floats (gray units)
             entry['Age'] = float(entry['Age'])
@@ -56,7 +87,7 @@ if __name__ == "__main__":
             "Age": 45.6,
             "Tumor_grade": "III",
             "Node_grade": "2",
-            "Tumor_size": "3",
-            "Hormone_receptor": 0
+            "Tumor_size_grade": "3",
+            "Hormone_receptor": '0'
         }
     ))

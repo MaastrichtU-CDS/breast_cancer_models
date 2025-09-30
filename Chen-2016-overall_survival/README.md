@@ -21,7 +21,7 @@ docker run --rm -p 8000:8000 ghcr.io/maastrichtu-cds/breast_cancer_models/chen_2
 
 ## To predict: 
 
-curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '{"Age": 45.6, "Tumor_grade": "III", "Node_grade": "2", "Tumor_size": "3", "Hormone_receptor": 0}'
+curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '{"Age": 45.6, "Tumor_grade": "III", "Node_grade": "2", "Tumor_size_grade": "3", "Hormone_receptor": 0}'
 
 curl http://localhost:8000/result
 
@@ -35,7 +35,7 @@ docker run --rm -p 8000:8000 ghcr.io/maastrichtu-cds/breast_cancer_models/chen_2
 
 ## To predict: 
 
-curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '{"Age": 45.6, "Tumor_grade": "III", "Node_grade": "2", "Tumor_size": "3", "Hormone_receptor": 0}'
+curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '{"Age": 45.6, "Tumor_grade": "III", "Node_grade": "2", "Tumor_size_grade": "3", "Hormone_receptor": 0}'
 
 curl http://localhost:8000/result
 

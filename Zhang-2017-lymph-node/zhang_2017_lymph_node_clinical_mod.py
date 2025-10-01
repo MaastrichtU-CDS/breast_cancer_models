@@ -37,9 +37,9 @@ class zhang_2017_lymph_node_clinical(logistic_regression):
                 "Tumor_size_grade": ['1', '2', '3'],  # assume 1 = baseline
                 "Pathological_type": ['IDC', 'ILC', 'other'],
                 # "Molecular_subtype": ['LM', 'HER2+', 'other']
-                "ER": ['0', '1'],  # 0 = negative, 1 = positive
-                "PR": ['0', '1'],  # 0 = negative, 1 = positive
-                "HER2": ['0', '1']  # 0 = negative, 1 = positive
+                "ER": [0, 1],  # 0 = negative, 1 = positive
+                "PR": [0, 1],  # 0 = negative, 1 = positive
+                "HER2": [0, 1]  # 0 = negative, 1 = positive
             }
             # For topography (tumor location), node grade, tumor size, pathological type and molecular subtype
             # ensure the right coding!!!
@@ -82,8 +82,8 @@ class zhang_2017_lymph_node_clinical(logistic_regression):
             # --- Tumor_size ---
             if "Tumor_size_grade" not in entry:
                 raise ValueError("Missing Tumor_size")
-            if entry["Tumor_size_grade"] not in allowed_values["Tumor_size_grade"]:
-                raise ValueError(f"Invalid Tumor_size value: {entry['Tumor_size']}")
+            if str(entry["Tumor_size_grade"]) not in allowed_values["Tumor_size_grade"]:
+                raise ValueError(f"Invalid Tumor_size value: {entry['Tumor_size_grade']}")
             entry["Tumor_size_2"] = 1.0 if entry["Tumor_size_grade"] == '2' else 0.0
             entry["Tumor_size_3"] = 1.0 if entry["Tumor_size_grade"] == '3' else 0.0
 
@@ -101,7 +101,7 @@ class zhang_2017_lymph_node_clinical(logistic_regression):
             for marker in ["ER", "PR", "HER2"]:
                 if marker not in entry:
                     raise ValueError(f"Missing {marker}")
-                if str(entry[marker]) not in allowed_values[marker]:
+                if entry[marker] not in allowed_values[marker]:
                     raise ValueError(f"Invalid {marker} value: {entry[marker]}")
                 entry[marker] = int(entry[marker])
 
@@ -122,12 +122,12 @@ if __name__ == "__main__":
         {
             "Age": 45.6,
             "Node_grade": 1,
-            "Tumor_size_grade": "3",
+            "Tumor_size_grade": 3,
             "Invasive_disease" : 1,
             "Topography": "UIQ",
-            "ER": "0",
-            "PR": "1",
-            "HER2": "0",
+            "ER": 0,
+            "PR": 1,
+            "HER2": 0,
             "Pathological_type": "ILC",
         }
     ))

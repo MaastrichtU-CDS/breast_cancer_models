@@ -97,8 +97,8 @@ class zhang_2017_lymph_node_clinical(logistic_regression):
             # --- Tumor_size ---
             if "Tumor_size_grade" not in entry:
                 raise ValueError("Missing Tumor_size")
-            if entry["Tumor_size_grade"] not in allowed_values["Tumor_size_grade"]:
-                raise ValueError(f"Invalid Tumor_size value: {entry['Tumor_size']}")
+            if str(entry["Tumor_size_grade"]) not in allowed_values["Tumor_size_grade"]:
+                raise ValueError(f"Invalid Tumor_size value: {entry['Tumor_size_grade']}")
             entry["Tumor_size_2"] = 1.0 if entry["Tumor_size_grade"] == '2' else 0.0
             entry["Tumor_size_3"] = 1.0 if entry["Tumor_size_grade"] == '3' else 0.0
 
@@ -134,7 +134,7 @@ if __name__ == "__main__":
             "Age": 45.6,
             "Node_grade": 1,
             "Tumor_size_grade": "3",
-            "Invasive_disease" : 1,
+            "Invasive_disease" : "1",
             "Topography": "UIQ",
             "Molecular_subtype": "LM",
             "Pathological_type": "ILC",

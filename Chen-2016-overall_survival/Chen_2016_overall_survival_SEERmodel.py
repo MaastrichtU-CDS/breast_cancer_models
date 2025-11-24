@@ -83,11 +83,5 @@ if __name__ == "__main__":
     model_obj = Chen_2016_overall_survival_SEERmodel()
     model_obj.get_input_parameters()
     print(model_obj.predict(
-        {
-            "Age": 45.6,
-            "Tumor_grade": "III",
-            "Node_grade": "2",
-            "Tumor_size_grade": "3",
-            "Hormone_receptor": '0'
-        }
+        [{'Age': 78, 'Tumor_grade': 'II', 'Tumor_size_grade': 2, 'Node_grade': 2, 'Hormone_receptor': 0}, {'Age': 98, 'Tumor_grade': 'II', 'Tumor_size_grade': 3, 'Node_grade': 3, 'Hormone_receptor': 1}]
     ))

@@ -130,13 +130,17 @@ if __name__ == "__main__":
     model_obj = zhang_2017_lymph_node_clinical()
     model_obj.get_input_parameters()
     print(model_obj.predict(
-        {
-            "Age": 45.6,
-            "Node_grade": 1,
-            "Tumor_size_grade": "3",
-            "Invasive_disease" : "1",
-            "Topography": "UIQ",
-            "Molecular_subtype": "LM",
-            "Pathological_type": "ILC",
-        }
+        [{'Age': 45, 'Molecular_subtype': 'LM', 'Invasive_disease': 0, 'Node_grade': 0, 'Tumor_size_grade': 2,
+          'Pathological_type': 'IDC', 'Topography': 'UIQ'},
+         {'Age': 78, 'Molecular_subtype': 'HER2+', 'Invasive_disease': 1, 'Node_grade': 1, 'Tumor_size_grade': 3,
+          'Pathological_type': 'ILC', 'Topography': 'UOQ'}]
+        # {
+        #     "Age": 45,
+        #     "Node_grade": 1,
+        #     "Tumor_size_grade": "3",
+        #     "Invasive_disease" : "1",
+        #     "Topography": "UIQ",
+        #     "Molecular_subtype": "LM",
+        #     "Pathological_type": "ILC",
+        # }
     ))

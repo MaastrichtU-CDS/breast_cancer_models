@@ -1,7 +1,7 @@
 from math import exp
 from model_execution import logistic_regression
 
-class zhang_2017_lymph_node_clinical(logistic_regression):
+class zhang_2017_lymph_node_clinical_mod(logistic_regression):
     def __init__(self):
         self._model_parameters = {
             "model_uri": "https://doi.org/10.18632/oncotarget.13330",
@@ -116,7 +116,7 @@ class zhang_2017_lymph_node_clinical(logistic_regression):
             return preprocess_entry(data)
 
 if __name__ == "__main__":
-    model_obj = zhang_2017_lymph_node_clinical()
+    model_obj = zhang_2017_lymph_node_clinical_mod()
     model_obj.get_input_parameters()
     print(model_obj.predict(
         {

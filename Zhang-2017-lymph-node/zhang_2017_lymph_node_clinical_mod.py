@@ -1,5 +1,85 @@
 from math import exp
+from pyexpat import features
+from typing import Tuple, Any, Dict, List, Optional
+
 from model_execution import logistic_regression
+
+def validate_categorical_num_feature(data: Any, feature: str, categories) -> bool:
+    if feature not in data:
+        raise ValueError(f"Missing {feature}")
+    try:
+        data[feature] = int(data[feature])
+    except (TypeError, ValueError):
+        raise TypeError(f"Input variable {feature} must be a number")
+
+    if data[feature] not in categories[feature]:
+        raise ValueError(f"Input feature {feature} value is not allowed: {data[feature]}")
+    return True
+
+def validate_categorical_str_feature(data: Any, feature: str, categories) -> bool:
+    if feature not in data:
+        raise ValueError(f"Missing {feature}")
+    try:
+        data[feature] = str(data[feature])
+    except (TypeError, ValueError):
+        raise TypeError(f"Input variable {feature} must be string")
+
+    if data[feature] not in categories[feature]:
+        raise ValueError(f"Input feature {feature} value is not allowed: {data[feature]}")
+    return True
+
+def validate_numerical_feature(data: Any, feature: str, min_value: float, max_value: float) -> bool:
+  """
+  Validates a numerical feature in a dictionary or list of dictionaries.
+
+  Parameters:
+  - data: dict or list of dicts containing the input data
+  - feature: str, the name of the feature to validate
+  - min_value: float, minimum allowed value (must not be None)
+  - max_value: float, maximum allowed value (must not be None)
+
+  Raises:
+  - ValueError if the feature is missing or out of range
+  - TypeError if the feature is not a number (rejects bools)
+  """
+  # Guard against missing range bounds
+  if min_value is None or max_value is None:
+    raise ValueError(f"Allowed range for feature '{feature}' is not available")
+
+  def _check_value(val: Any, idx: Optional[int] = None):
+    label = f"item {idx}" if idx is not None else "object"
+    # Reject booleans explicitly: isinstance(True, int) == True, so check bool first
+    if isinstance(val, bool) or not isinstance(val, (int, float)):
+      raise TypeError(f"Invalid {feature} type in {label}, expected a number")
+    if not (min_value <= val <= max_value):
+      raise ValueError(f"Invalid {feature} value in {label}: {val} (Allowed range: {min_value}-{max_value})")
+
+  if isinstance(data, list):
+    for i, item in enumerate(data):
+      if not isinstance(item, dict):
+        raise TypeError(f"Invalid input at item {i}: expected a dict")
+      if feature not in item:
+        raise ValueError(f"Missing {feature} in item {i}")
+      # safe get, avoid raising KeyError
+      try:
+          item[feature] = float(item.get(feature))
+      except (TypeError, ValueError):
+          raise TypeError(f"Input variable {feature} must be a number")
+      val = item.get(feature)
+      _check_value(val, i)
+  else:
+    if not isinstance(data, dict):
+      raise TypeError("Input data must be a dict or list of dicts")
+    if feature not in data:
+      raise ValueError(f"Missing {feature}")
+    try:
+        data[feature] = float(data.get(feature))
+    except (TypeError, ValueError):
+        raise TypeError(f"Input variable {feature} must be a number")
+    val = data.get(feature)
+    _check_value(val, None)
+
+  return True
 
 class zhang_2017_lymph_node_clinical_mod(logistic_regression):
     def __init__(self):
@@ -9,20 +89,20 @@ class zhang_2017_lymph_node_clinical_mod(logistic_regression):
             "intercept": -2.483,
             "covariate_weights": {
                 "Age": -0.014,
-                "Topography_1": -0.944,
-                "Topography_2": -0.529,
-                "Topography_3": -1.444,
-                "Topography_4": -0.237,
-                "Topography_5": -0.642,
-                "Tumor_size_2": 0.204,
-                "Tumor_size_3":0.663,
-                "Node_grade": 1.235,
+                "Topography_1": -0.944, # mediaal boven
+                "Topography_2": -0.529, # lateraal boven
+                "Topography_3": -1.444, # mediaal onder  locatie
+                "Topography_4": -0.237, # Lateraal onder
+                "Topography_5": -0.642, # Axillaire uitloper | NNO | Overlappend | Tepel
+                "Tumor_size_2": 0.204, #ct=2
+                "Tumor_size_3":0.663, # ct=3
+                "Node_clin_grade": 1.235,
                 "Invasive_disease":0.768,
-                "Pathological_type_1": 2.944,
-                "Pathological_type_2": 2.884,
-                "Pathological_type_3": 2.111,
-                "Molecular_subtype_1": 0.322,
-                "Molecular_subtype_2": 0.141,
+                "Pathological_type_1": 2.944, # ductaal
+                "Pathological_type_2": 2.884, # Lobulair
+                "Pathological_type_3": 2.111, # Other
+                "Molecular_subtype_1": 0.322, #Luminal
+                "Molecular_subtype_2": 0.141, #HER2+
             }
         }
 
@@ -33,10 +113,9 @@ class zhang_2017_lymph_node_clinical_mod(logistic_regression):
             allowed_values = {
                 "Topography": ['UIQ', 'UOQ', 'LIQ', 'LOQ', 'other'],
                 "Invasive_disease": [0, 1],
-                "Node_grade": [0, 1],  # adjust max nodes if needed
-                "Tumor_size_grade": ['1', '2', '3'],  # assume 1 = baseline
-                "Pathological_type": ['IDC', 'ILC', 'other'],
-                # "Molecular_subtype": ['LM', 'HER2+', 'other']
+                "Node_clin_grade": [0, 1,2,3],  # adjust max nodes if needed
+                "Tumor_clin_grade": [0,1,2,3],  # assume 1 = baseline
+                "Pathological_type": ['IDC', 'ILC','DCIS-Mi', 'other'],
                 "ER": [0, 1],  # 0 = negative, 1 = positive
                 "PR": [0, 1],  # 0 = negative, 1 = positive
                 "HER2": [0, 1]  # 0 = negative, 1 = positive
@@ -45,68 +124,66 @@ class zhang_2017_lymph_node_clinical_mod(logistic_regression):
             # ensure the right coding!!!
 
             # Age expected as floats
-            entry['Age'] = float(entry['Age'])
+            feature='Age'
+            min_f, max_f = [0, 100]
+            validate_numerical_feature(entry,feature,min_f, max_f)
 
             # --- Topography ---
-            if "Topography" not in entry:
-                raise ValueError("Missing Topography")
-            if entry["Topography"] not in allowed_values["Topography"]:
-                raise ValueError(f"Invalid Topography value: {entry['Topography']}")
-
-            entry["Topography_1"] = 1.0 if entry["Topography"] == 'UIQ' else 0.0
-            entry["Topography_2"] = 1.0 if entry["Topography"] == 'UOQ' else 0.0
-            entry["Topography_3"] = 1.0 if entry["Topography"] == 'LIQ' else 0.0
-            entry["Topography_4"] = 1.0 if entry["Topography"] == 'LOQ' else 0.0
-            entry["Topography_5"] = 1.0 if entry["Topography"] == 'other' else 0.0
+            feature="Topography"
+            validate_categorical_str_feature(entry,feature,allowed_values)
+            entry["Topography_1"] = 1.0 if entry[feature] == 'UIQ' else 0.0 # upper inner
+            entry["Topography_2"] = 1.0 if entry[feature] == 'UOQ' else 0.0 # upper outer
+            entry["Topography_3"] = 1.0 if entry[feature] == 'LIQ' else 0.0 # lower inner
+            entry["Topography_4"] = 1.0 if entry[feature] == 'LOQ' else 0.0 # lower outer
+            entry["Topography_5"] = 1.0 if entry[feature] == 'other' else 0.0
 
             # --- Invasive_disease ---
-            if "Invasive_disease" not in entry:
-                raise ValueError("Missing Invasive_disease")
-            try:
-                entry["Invasive_disease"] = int(entry["Invasive_disease"])
-            except ValueError:
-                raise ValueError(f"Invasive_disease must be integer, got {entry['Invasive_disease']}")
-            if entry["Invasive_disease"] not in allowed_values["Invasive_disease"]:
-                raise ValueError(f"Invalid Invasive_disease value: {entry['Invasive_disease']}")
+            feature="Invasive_disease"
+            validate_categorical_num_feature(entry,feature,allowed_values)
 
             # --- Node_grade ---
-            if "Node_grade" not in entry:
-                raise ValueError("Missing Node_grade")
-            try:
-                entry["Node_grade"] = int(entry["Node_grade"])
-            except ValueError:
-                raise ValueError(f"Node_grade must be integer, got {entry['Node_grade']}")
-            if entry["Node_grade"] not in allowed_values["Node_grade"]:
-                raise ValueError(f"Invalid Node_grade value: {entry['Node_grade']}")
+            feature="Node_clin_grade"
+            entry[feature] = str(entry[feature])
+            if entry[feature] == 'I':
+                entry[feature] = '1'
+            elif entry[feature] == 'II':
+                entry[feature] = '2'
+            elif entry[feature] == 'III':
+                entry[feature] = '3'
+            elif entry[feature] == 'IV':
+                entry[feature] = '4'
+            validate_categorical_num_feature(entry,feature,allowed_values)
+            entry[feature]=1.0 if entry[feature] > 0 else 0.0
 
             # --- Tumor_size ---
-            if "Tumor_size_grade" not in entry:
-                raise ValueError("Missing Tumor_size")
-            if str(entry["Tumor_size_grade"]) not in allowed_values["Tumor_size_grade"]:
-                raise ValueError(f"Invalid Tumor_size value: {entry['Tumor_size_grade']}")
-            entry["Tumor_size_2"] = 1.0 if entry["Tumor_size_grade"] == '2' else 0.0
-            entry["Tumor_size_3"] = 1.0 if entry["Tumor_size_grade"] == '3' else 0.0
+            feature="Tumor_clin_grade"
+            entry[feature] = str(entry[feature])
+            if entry[feature] == 'I':
+                entry[feature] = '1'
+            elif entry[feature] == 'II':
+                entry[feature] = '2'
+            elif entry[feature] == 'III':
+                entry[feature] = '3'
+            elif entry[feature] == 'IV':
+                entry[feature] = '4'
+            validate_categorical_num_feature(entry,feature,allowed_values)
+            entry["Tumor_size_2"] = 1.0 if entry[feature] == 2 else 0.0
+            entry["Tumor_size_3"] = 1.0 if entry[feature] == 3 else 0.0
 
             # --- Pathological_type ---
-            if "Pathological_type" not in entry:
-                raise ValueError("Missing Pathological_type")
-            if entry["Pathological_type"] not in allowed_values["Pathological_type"]:
-                raise ValueError(f"Invalid Pathological_type value: {entry['Pathological_type']}")
-            entry["Pathological_type_1"] = 1.0 if entry["Pathological_type"] == 'IDC' else 0.0
-            entry["Pathological_type_2"] = 1.0 if entry["Pathological_type"] == 'ILC' else 0.0
-            entry["Pathological_type_3"] = 1.0 if entry["Pathological_type"] == 'other' else 0.0
+            feature="Pathological_type"
+            validate_categorical_str_feature(entry,feature,allowed_values)
+            entry["Pathological_type_1"] = 1.0 if entry[feature] == 'IDC' else 0.0 # invasive ductal carcinoma
+            entry["Pathological_type_2"] = 1.0 if entry[feature] == 'ILC' else 0.0 # invasive lobular carcinoma
+            entry["Pathological_type_3"] = 1.0 if entry[feature] == 'other' else 0.0
 
             # --- Molecular_subtype ---
             # --- ER, PR, HER2 ---
             for marker in ["ER", "PR", "HER2"]:
-                if marker not in entry:
-                    raise ValueError(f"Missing {marker}")
-                if entry[marker] not in allowed_values[marker]:
-                    raise ValueError(f"Invalid {marker} value: {entry[marker]}")
-                entry[marker] = int(entry[marker])
+                validate_categorical_num_feature(entry,marker,allowed_values)
 
-            entry["Molecular_subtype_1"] = 1.0 if ((entry["ER"] == 1 or entry["PR"] == 1)) else 0.0
-            entry["Molecular_subtype_2"] = 1.0 if ((entry["ER"] == 0 or entry["PR"] == 0) and entry["HER2"] == 1) else 0.0
+            entry["Molecular_subtype_1"] = 1.0 if ((entry["ER"] == 1 or entry["PR"] == 1) and entry["HER2"] == 0) else 0.0 #Luminal
+            entry["Molecular_subtype_2"] = 1.0 if ((entry["ER"] == 0 or entry["PR"] == 0) and entry["HER2"] == 1) else 0.0 #HER2+
 
             return entry
 
@@ -121,11 +198,11 @@ if __name__ == "__main__":
     print(model_obj.predict(
         {
             "Age": 45.6,
-            "Node_grade": 1,
-            "Tumor_size_grade": 3,
+            "Node_clin_grade": 3,
+            "Tumor_clin_grade": 2,
             "Invasive_disease" : 1,
             "Topography": "UIQ",
-            "ER": 0,
+            "ER": '0',
             "PR": 1,
             "HER2": 0,
             "Pathological_type": "ILC",

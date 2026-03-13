@@ -1,5 +1,18 @@
 from math import exp
 from model_execution import logistic_regression
+from typing import Tuple, Any, Dict, List, Optional
+
+def validate_categorical_num_feature(data: Any, feature: str, categories) -> bool:
+    if feature not in data:
+        raise ValueError(f"Missing {feature}")
+    try:
+        data[feature] = int(data[feature])
+    except (TypeError, ValueError):
+        raise TypeError(f"Input variable {feature} must be a number")
+
+    if data[feature] not in categories[feature]:
+        raise ValueError(f"Input feature {feature} value is not allowed: {data[feature]}")
+    return True
 
 class li_2011_recurrence_survival_mod(logistic_regression):
     def __init__(self):
@@ -19,10 +32,10 @@ class li_2011_recurrence_survival_mod(logistic_regression):
             # For hormone receptor, ensure binary integer coding (0 or 1)
             # Should add data validation after we know the format of variables
             allowed_values = {
-                "Tumor_grade": ['I', 'II', 'III'],
-                "ER": ['0', '1'],  # 0 = negative, 1 = positive
-                "PR": ['0', '1'],  # 0 = negative, 1 = positive
-                "HER2": ['0', '1']  # 0 = negative, 1 = positive
+                "Tumor_grade": [1, 2, 3, 4],
+                "ER": [0,1],  # 0 = negative, 1 = positive
+                "PR": [0,1],  # 0 = negative, 1 = positive
+                "HER2": [0,1]  # 0 = negative, 1 = positive
             }
             # For N_positive_node, tumor grade, nd molecular subtype
             # ensure the right coding!!!
@@ -31,28 +44,41 @@ class li_2011_recurrence_survival_mod(logistic_regression):
             # entry["Molecular_subtype"] = 1.0 if ((entry["ER"] == 1 or entry["PR"] == 1) and entry["HER2"] ==0) else 0.0 # luminal-like
 
             # --- N_positive_node ---
-            if "N_positive_node" not in entry:
-                raise ValueError("Missing N_positive_node")
+            feature="N_positive_node"
+            if feature not in entry:
+                raise ValueError(f"Missing {feature}")
             try:
-                n = int(entry["N_positive_node"])
+                entry[feature] = int(entry[feature])
             except ValueError:
-                raise ValueError(f"N_positive_node must be an integer, got {entry['N_positive_node']}")
+                raise ValueError(f"{feature} must be an integer number, got {entry[feature]}")
             # if n < 0 or n > 50:  # adjustable upper bound
             #     raise ValueError(f"N_positive_node out of allowed range (0–50), got {n}")
 
-            entry["N_positive_node"] = n
-            entry["N_positive_node_cat"] = 0 if n == 0 else (1 if n <= 3 else 2)
+            entry["N_positive_node_cat"] = 0 if entry[feature] == 0 else (1 if entry[feature] <= 3 else 2)
 
             # --- Tumor_grade ---
-            if "Tumor_grade" not in entry:
-                raise ValueError("Missing Tumor_grade")
-            if entry["Tumor_grade"] not in allowed_values["Tumor_grade"]:
-                raise ValueError(f"Invalid Tumor_grade value: {entry['Tumor_grade']}")
+            # By the model:
+            # - grade (three groups: I: 1; II: 2; III: 3)
+            # By https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-grade:
+            # Grade I - Well differentiated (low grade)
+            # Grade II 	- Moderately differentiated (intermediate grade)
+            # Grade III - Poorly differentiated (high grade)
+            # Grade IV - undifferentiated / anaplastic (high grade)
+            # diffgrtxt	9	Differentiatiegraad  onbekend / n.v.t.
+            feature="Tumor_grade"
+            if feature not in entry:
+                raise ValueError(f"Missing {feature}")
+            entry[feature] = str(entry[feature])
+            if entry[feature] == 'I':
+                entry[feature] = '1'
+            elif entry[feature] == 'II':
+                entry[feature] = '2'
+            elif entry[feature] == 'III':
+                entry[feature] = '3'
+            elif entry[feature] == 'IV':
+                entry[feature] = '4'
 
-            entry["Tumor_grade"] = (
-                1.0 if entry["Tumor_grade"] == 'I'
-                else (2.0 if entry["Tumor_grade"] == 'II' else 3.0)
-            )
+            validate_categorical_num_feature(entry, feature, allowed_values)
 
             # --- ER, PR, HER2 ---
             for marker in ["ER", "PR", "HER2"]:
@@ -77,9 +103,9 @@ if __name__ == "__main__":
     model_obj.get_input_parameters()
     print(model_obj.predict(
         {
-            "N_positive_node": 2,
-            "Tumor_grade": "I",
-            "ER": 0,
+            "N_positive_node": 4,
+            "Tumor_grade": '3',
+            "ER": 1,
             "PR": 0,
             "HER2": 0
         }

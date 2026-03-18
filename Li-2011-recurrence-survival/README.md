@@ -37,3 +37,34 @@ curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -
 curl http://localhost:8000/result
 
 The answer is [0.19170025205726862,0.41994479935622686]
+
+
+For the modification version of the model:
+
+- Number of positive nodes 
+  - integer number > 0
+- Tumor grade
+  - low Grade I - 1 or 'I' or '1'
+  - intermediate Grade II - 2 or 'II' or '2'
+  - high Grade III - 3 or 'III' or '3'
+- Estrogen receptor
+  - positive -1
+  - negative -0
+- Progesterone receptor
+  - positive -1
+  - negative -0
+- HER2/neu status
+  - positive -1
+  - negative -0
+
+Luminal-A =1 if ER and PR are positive (1) and HER2/neu is negative (0)
+
+# To predict 
+
+curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '[{"N_positive_node": 3, "Tumor_grade": 2, "ER": "0", "PR": 0, "HER2":0},{"N_positive_node": 4,"Tumor_grade": "III", "ER":0, "PR":0,"HER2":1}]
+
+curl http://localhost:8000/result
+
+{"prediction_0":0.19170025205726862,"prediction_1":0.41994479935622686}
+
+

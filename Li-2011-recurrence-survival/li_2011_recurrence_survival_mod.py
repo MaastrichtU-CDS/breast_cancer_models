@@ -32,7 +32,7 @@ class li_2011_recurrence_survival_mod(logistic_regression):
             # For hormone receptor, ensure binary integer coding (0 or 1)
             # Should add data validation after we know the format of variables
             allowed_values = {
-                "Tumor_grade": [1, 2, 3, 4],
+                "Tumor_grade": [1, 2, 3],
                 "ER": [0,1],  # 0 = negative, 1 = positive
                 "PR": [0,1],  # 0 = negative, 1 = positive
                 "HER2": [0,1]  # 0 = negative, 1 = positive
@@ -75,8 +75,6 @@ class li_2011_recurrence_survival_mod(logistic_regression):
                 entry[feature] = '2'
             elif entry[feature] == 'III':
                 entry[feature] = '3'
-            elif entry[feature] == 'IV':
-                entry[feature] = '4'
 
             validate_categorical_num_feature(entry, feature, allowed_values)
 

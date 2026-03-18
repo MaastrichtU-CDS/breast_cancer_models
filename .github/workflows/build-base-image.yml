@@ -47,11 +47,11 @@ jobs:
 #          fm-build zhang_2017_lymph_node_clinical_mod.py ghcr.io/maastrichtu-cds/breast_cancer_models/zhang_2017_lymph_node_clinical_mod:latest
 #          docker push ghcr.io/maastrichtu-cds/breast_cancer_models/zhang_2017_lymph_node_clinical_mod:latest
       
-      - name: built and push image li_2011_recurrence_survival_mod to breast_cancer_models
-        run: |
-             cd Li-2011-recurrence-survival
-             fm-build li_2011_recurrence_survival_mod.py ghcr.io/maastrichtu-cds/breast_cancer_models/li_2011_recurrence_survival_mod:latest
-             docker push ghcr.io/maastrichtu-cds/breast_cancer_models/li_2011_recurrence_survival_mod:latest
+#      - name: built and push image li_2011_recurrence_survival_mod to breast_cancer_models
+#        run: |
+#             cd Li-2011-recurrence-survival
+#             fm-build li_2011_recurrence_survival_mod.py ghcr.io/maastrichtu-cds/breast_cancer_models/li_2011_recurrence_survival_mod:latest
+#             docker push ghcr.io/maastrichtu-cds/breast_cancer_models/li_2011_recurrence_survival_mod:latest
 
 #      - name: built and push image dowsett_2018_metastatic_disease_rwd_mod to breast_cancer_models
 #        run: |

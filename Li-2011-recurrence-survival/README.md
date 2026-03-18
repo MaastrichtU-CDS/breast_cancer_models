@@ -12,6 +12,8 @@ Model metadata: https://v3.fairmodels.org/instance/cf34c0e8-bd56-4ff8-a205-56253
 
 Outcome: 5-year recurrence survival
 
+## Original model
+
 Input data:
 
 - Number of positive nodes 
@@ -26,13 +28,13 @@ Input data:
   - 'Luminal-A' - 1
   - others - 0
 
-# To run the model
+### To run the model
 
 docker pull ghcr.io/maastrichtu-cds/breast_cancer_models/li_2011_recurrence_survival:latest
 
 docker run --rm -p 8000:8000 ghcr.io/maastrichtu-cds/breast_cancer_models/li_2011_recurrence_survival:latest
 
-# To predict 
+### To predict 
 
 curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '[{"N_positive_node": 3,"Tumor_grade": "II", "Molecular_subtype": "non-luminal"}, {"N_positive_node": 4,"Tumor_grade": "III", "Molecular_subtype": "non-luminal"}]'
 
@@ -41,7 +43,7 @@ curl http://localhost:8000/result
 The answer is [0.19170025205726862,0.41994479935622686]
 
 
-For the modification version of the model:
+## For the modification version of the model:
 
 - Number of positive nodes 
   - integer number > 0
@@ -61,7 +63,14 @@ For the modification version of the model:
 
 Luminal-A =1 if ER and PR are positive (1) and HER2/neu is negative (0)
 
-# To predict 
+### To run the model
+
+docker pull ghcr.io/maastrichtu-cds/breast_cancer_models/li_2011_recurrence_survival_mod:latest
+
+docker run --rm -p 8000:8000 ghcr.io/maastrichtu-cds/breast_cancer_models/li_2011_recurrence_survival_mod:latest
+
+
+## To predict 
 
 curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '[{"N_positive_node": 3, "Tumor_grade": 2, "ER": "0", "PR": 0, "HER2":0},{"N_positive_node": 4,"Tumor_grade": "III", "ER":0, "PR":0,"HER2":1}]
 

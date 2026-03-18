@@ -150,8 +150,6 @@ class zhang_2017_lymph_node_clinical_mod(logistic_regression):
                 entry[feature] = '2'
             elif entry[feature] == 'III':
                 entry[feature] = '3'
-            elif entry[feature] == 'IV':
-                entry[feature] = '4'
             validate_categorical_num_feature(entry,feature,allowed_values)
             entry[feature]=1.0 if entry[feature] > 0 else 0.0
 
@@ -164,8 +162,6 @@ class zhang_2017_lymph_node_clinical_mod(logistic_regression):
                 entry[feature] = '2'
             elif entry[feature] == 'III':
                 entry[feature] = '3'
-            elif entry[feature] == 'IV':
-                entry[feature] = '4'
             validate_categorical_num_feature(entry,feature,allowed_values)
             entry["Tumor_size_2"] = 1.0 if entry[feature] == 2 else 0.0
             entry["Tumor_size_3"] = 1.0 if entry[feature] == 3 else 0.0
@@ -202,9 +198,9 @@ if __name__ == "__main__":
             "Tumor_clin_grade": 2,
             "Invasive_disease" : 1,
             "Topography": "UIQ",
-            "ER": '0',
-            "PR": 1,
-            "HER2": 0,
+            "ER": 0,
+            "PR": 0,
+            "HER2": 1,
             "Pathological_type": "ILC",
         }
     ))

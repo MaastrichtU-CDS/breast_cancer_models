@@ -8,6 +8,8 @@ a single-institution analysis consisting of 764 Chinese breast cancer
 cases. Annals of surgical oncology, 18(9), 2492-2499.
 https://doi.org/10.1245/s10434-011-1626-2
 
+Model metadata: https://v3.fairmodels.org/instance/cf34c0e8-bd56-4ff8-a205-56253be44a74
+
 Outcome: 5-year recurrence survival
 
 Input data:

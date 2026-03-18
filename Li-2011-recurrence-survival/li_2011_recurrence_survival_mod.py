@@ -84,9 +84,9 @@ class li_2011_recurrence_survival_mod(logistic_regression):
             for marker in ["ER", "PR", "HER2"]:
                 if marker not in entry:
                     raise ValueError(f"Missing {marker}")
-                if str(entry[marker]) not in allowed_values[marker]:
+                entry[marker]=int(entry[marker])
+                if entry[marker] not in allowed_values[marker]:
                     raise ValueError(f"Invalid {marker} value: {entry[marker]}")
-                entry[marker] = int(entry[marker])
 
             # --- Molecular subtype ---
             entry["Molecular_subtype"] = 1.0 if ((entry["ER"] == 1 or entry["PR"] == 1) and entry["HER2"] == 0) else 0.0

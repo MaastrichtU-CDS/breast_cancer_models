@@ -43,7 +43,7 @@ curl http://localhost:8000/result
 The answer is [0.19170025205726862,0.41994479935622686]
 
 
-## For the modification version of the model:
+## The modification version of the model - to match real world data
 
 - Number of positive nodes 
   - integer number > 0
@@ -70,7 +70,7 @@ docker pull ghcr.io/maastrichtu-cds/breast_cancer_models/li_2011_recurrence_surv
 docker run --rm -p 8000:8000 ghcr.io/maastrichtu-cds/breast_cancer_models/li_2011_recurrence_survival_mod:latest
 
 
-## To predict 
+### To predict 
 
 curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '[{"N_positive_node": 3, "Tumor_grade": 2, "ER": "0", "PR": 0, "HER2":0},{"N_positive_node": 4,"Tumor_grade": "III", "ER":0, "PR":0,"HER2":1}]
 

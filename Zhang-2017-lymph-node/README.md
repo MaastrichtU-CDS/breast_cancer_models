@@ -93,8 +93,8 @@ Input data:
   - positive -1
   - negative -0
 
-Luminal-A =1 if ER and PR are positive (1) and HER2/neu is negative (0)
-
+Luminal = 1 if ER and PR are positive (1) and HER2/neu is negative (0)
+HER2+ = 1 if HER2/neu is positive (1)
 
 ### To run the model
 

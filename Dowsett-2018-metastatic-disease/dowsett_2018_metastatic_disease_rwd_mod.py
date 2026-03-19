@@ -67,7 +67,7 @@ def validate_numerical_feature(data: Any, feature: str, min_value: float, max_va
 
   return True
 
-class dowsett_2018_metastatic_disease(model_execution):
+class dowsett_2018_metastatic_disease_rwd_mod(model_execution):
     def __init__(self):
         self._model_parameters = {
             "model_uri": "https://doi.org/10.1200/JCO.2017.76.4258",
@@ -206,7 +206,7 @@ class dowsett_2018_metastatic_disease(model_execution):
             return results
 
 if __name__ == "__main__":
-    model_obj = dowsett_2018_metastatic_disease()
+    model_obj = dowsett_2018_metastatic_disease_rwd_mod()
     model_obj.get_input_parameters()
     print(model_obj.predict(
         {

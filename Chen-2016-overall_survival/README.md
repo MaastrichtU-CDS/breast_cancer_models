@@ -77,15 +77,12 @@ Input variables for the model
 docker pull ghcr.io/maastrichtu-cds/breast_cancer_models/chen_2016_overall_survival_seermodel_mod:latest
 
 docker run --rm -p 8000:8000 ghcr.io/maastrichtu-cds/breast_cancer_models/chen_2016_overall_survival_seermodel_mod:latest
-
 ### To predict: 
 
-curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '{"Age": 45.6, "Tumor_grade": "III", "Node_grade": "2", "Tumor_size_grade": "3", "ER": 0, "PR": 0}'
-
+curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '[{"Age": 45.6, "Tumor_grade": "II", "Tumor_hist_grade":3, "Node_hist_grade":3,"ER":"1","PR":"1"},{"Age": 98, "Tumor_grade": "II", "Tumor_hist_grade":3, "Node_hist_grade":3,"ER":"0","PR":"0"}]'
 curl http://localhost:8000/result
 
-The answer is 0.6200121980391241
-
+The answer is {"prediction_0":0.37744667191883613,"prediction_1":0.8982564340112952}
 
 ### To run the Chen-2016-overall_survival_NCKUHmodel
 
@@ -93,8 +90,7 @@ docker run --rm -p 8000:8000 ghcr.io/maastrichtu-cds/breast_cancer_models/chen_2
 
 ### To predict: 
 
-curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '{"Age": 45.6, "Tumor_grade": "III", "Node_grade": "2", "Tumor_size_grade": "3", "ER": 0, "PR": 0}'
-
+curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '[{"Age": 45.6, "Tumor_grade": "II", "Tumor_hist_grade":3, "Node_hist_grade":3,"ER":"1","PR":"1"},{"Age": 98, "Tumor_grade": "II", "Tumor_hist_grade":3, "Node_hist_grade":3,"ER":"0","PR":"0"}]'
 curl http://localhost:8000/result
 
-The answer is 0.4229194799630965
+The answer is {"prediction_0":0.24016045929505975,"prediction_1":0.4236029910972445}

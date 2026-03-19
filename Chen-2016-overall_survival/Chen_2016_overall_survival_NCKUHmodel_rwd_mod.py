@@ -186,6 +186,6 @@ if __name__ == "__main__":
     model_obj = Chen_2016_overall_survival_NCKUHmodel_rwd_mod()
     model_obj.get_input_parameters()
     print(model_obj.predict(
-        [{'Age': 45.6, 'Tumor_grade': 'III', 'Tumor_hist_grade': 3, 'Node_hist_grade': 2, 'ER': '0', 'PR': '0'},
+        [{'Age': 45.6, 'Tumor_grade': 'II', 'Tumor_hist_grade': 3, 'Node_hist_grade': 3, 'ER': '1', 'PR': '1'},
          {'Age': 98, 'Tumor_grade': 'II', 'Tumor_hist_grade': 3, 'Node_hist_grade': 3, 'ER': '1', 'PR':'1'}]
     ))

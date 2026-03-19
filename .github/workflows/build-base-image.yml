@@ -32,13 +32,13 @@ jobs:
       - name: built and push image Chen_2016_overall_survival_SEERmodel_rwd_mod to breast_cancer_models
         run: |
           cd Chen-2016-overall_survival
-          fm-build Chen_2016_overall_survival_SEERmodel_rwd_mod.py ghcr.io/maastrichtu-cds/breast_cancer_models/Chen_2016_overall_survival_SEERmodel_mod:latest
-          docker push ghcr.io/maastrichtu-cds/breast_cancer_models/Chen_2016_overall_survival_SEERmodel_mod:latest
+          fm-build Chen_2016_overall_survival_SEERmodel_rwd_mod.py ghcr.io/maastrichtu-cds/breast_cancer_models/chen_2016_overall_survival_seermodel_mod:latest
+          docker push ghcr.io/maastrichtu-cds/breast_cancer_models/chen_2016_overall_survival_seermodel_mod:latest
 
       - name: built and push image Chen_2016_overall_survival_NCKUmodel to breast_cancer_models
         run: |
           cd Chen-2016-overall_survival
-          fm-build Chen_2016_overall_survival_NCKUHmodel_rwd_mod.py ghcr.io/maastrichtu-cds/breast_cancer_models/Chen_2016_overall_survival_NCKUHmodel_mod:latest
+          fm-build Chen_2016_overall_survival_NCKUHmodel_rwd_mod.py ghcr.io/maastrichtu-cds/breast_cancer_models/chen_2016_overall_survival_nckuhmodel_mod:latest
           docker push ghcr.io/maastrichtu-cds/breast_cancer_models/chen_2016_overall_survival_nckuhmodel_mod:latest
 #
 #      - name: built and push image Zhang_2017_lymph_node_clinical_mod to breast_cancer_models

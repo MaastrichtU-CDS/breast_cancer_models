@@ -9,6 +9,8 @@ receptor–positive breast cancer treated with 5 years of endocrine therapy:
 CTS5. Journal of Clinical Oncology, 36(19), 1941.
 https://doi.org/10.1200/JCO.2017.76.4258
 
+Model metadata: https://v3.fairmodels.org/instance/05568731-ee03-4642-8cf6-bae9d25ab4d1
+
 Outcome: 5 to 10 years distant recurrence (metastatic disease?)
 The model calculates the Clinical Treatment Score post–5 years [CTS5] to estimate risk of late distant recurrence
 

@@ -1,7 +1,85 @@
 from math import exp
 from pyexpat import features
+from typing import Tuple, Any, Dict, List, Optional
 
 from model_execution import logistic_regression
+
+def validate_categorical_num_feature(data: Any, feature: str, categories) -> bool:
+    if feature not in data:
+        raise ValueError(f"Missing {feature}")
+    try:
+        data[feature] = int(data[feature])
+    except (TypeError, ValueError):
+        raise TypeError(f"Input variable {feature} must be a number")
+
+    if data[feature] not in categories[feature]:
+        raise ValueError(f"Input feature {feature} value is not allowed: {data[feature]}")
+    return True
+
+def validate_categorical_str_feature(data: Any, feature: str, categories) -> bool:
+    if feature not in data:
+        raise ValueError(f"Missing {feature}")
+    try:
+        data[feature] = str(data[feature])
+    except (TypeError, ValueError):
+        raise TypeError(f"Input variable {feature} must be string")
+
+    if data[feature] not in categories[feature]:
+        raise ValueError(f"Input feature {feature} value is not allowed: {data[feature]}")
+    return True
+
+def validate_numerical_feature(data: Any, feature: str, min_value: float, max_value: float) -> bool:
+  """
+  Validates a numerical feature in a dictionary or list of dictionaries.
+
+  Parameters:
+  - data: dict or list of dicts containing the input data
+  - feature: str, the name of the feature to validate
+  - min_value: float, minimum allowed value (must not be None)
+  - max_value: float, maximum allowed value (must not be None)
+
+  Raises:
+  - ValueError if the feature is missing or out of range
+  - TypeError if the feature is not a number (rejects bools)
+  """
+  # Guard against missing range bounds
+  if min_value is None or max_value is None:
+    raise ValueError(f"Allowed range for feature '{feature}' is not available")
+
+  def _check_value(val: Any, idx: Optional[int] = None):
+    label = f"item {idx}" if idx is not None else "object"
+    # Reject booleans explicitly: isinstance(True, int) == True, so check bool first
+    if isinstance(val, bool) or not isinstance(val, (int, float)):
+      raise TypeError(f"Invalid {feature} type in {label}, expected a number")
+    if not (min_value <= val <= max_value):
+      raise ValueError(f"Invalid {feature} value in {label}: {val} (Allowed range: {min_value}-{max_value})")
+
+  if isinstance(data, list):
+    for i, item in enumerate(data):
+      if not isinstance(item, dict):
+        raise TypeError(f"Invalid input at item {i}: expected a dict")
+      if feature not in item:
+        raise ValueError(f"Missing {feature} in item {i}")
+      # safe get, avoid raising KeyError
+      try:
+          item[feature] = float(item.get(feature))
+      except (TypeError, ValueError):
+          raise TypeError(f"Input variable {feature} must be a number")
+      val = item.get(feature)
+      _check_value(val, i)
+  else:
+    if not isinstance(data, dict):
+      raise TypeError("Input data must be a dict or list of dicts")
+    if feature not in data:
+      raise ValueError(f"Missing {feature}")
+    try:
+        data[feature] = float(data.get(feature))
+    except (TypeError, ValueError):
+        raise TypeError(f"Input variable {feature} must be a number")
+    val = data.get(feature)
+    _check_value(val, None)
+
+  return True
 
 class Chen_2016_overall_survival_SEERmodel_rwd_mod(logistic_regression):
     def __init__(self):
@@ -44,25 +122,23 @@ class Chen_2016_overall_survival_SEERmodel_rwd_mod(logistic_regression):
 
 
             allowed_values = {
-                "Hormone_receptor": ['0', '1'],  # 0 = positive, 1 = negative
-                "Tumor_grade": ['1', '2', '3', '4'],
-                "Node_hist_grade": ['0', '1', '1M', '2', '2A','2B', '3', '3A', '3B', '3C'],  # 0 = baseline, 1/2/3 = dummies
-                "Tumor_hist_grade": ['0', '1', '2', '2A', '2B', '3', '4', '4A', '4B', '4C', '4D']  # 0–1 = baseline group
+                "ER": [0,1],  # 0 = negative, 1 = positive
+                "PR": [0, 1],  # 0 = negative, 1 = positive
+                "Tumor_grade": [1, 2, 3, 4],
+                "Node_hist_grade": ['0', '1', '1M', '1A', '1AS', '1B', '1BS', '1C', '1CS','1MS','2', '2A', '2B', '2AS','3', '3A', '3B', '3C'],  # 0 = baseline, 1/2/3 = dummies
+                "Tumor_hist_grade": ['0', '1', '2', '2A', '2B', '3', '4', '4A', '4B', '4C', '4D']
             }
 
             # --- Hormone receptor ---
-            feature="Hormone_receptor"
-            if feature not in entry:
-                raise ValueError(f"Missing {feature}")
-            try:
-                entry[feature]=str(entry[feature])
-            except (TypeError, ValueError):
-                raise TypeError(f"Input variable {feature} must be a string")
+            feature = "Hormone_receptor"
+            # --- if either ER or PR are positive, hormone receptore is positive and
+            # used as '0' in the model.
+            # --- ER, PR
+            for marker in ["ER", "PR"]:
+                validate_categorical_num_feature(entry, marker, allowed_values)
 
-            if entry[feature] not in allowed_values[feature]:
-                raise ValueError(f"Invalid {feature} value: {entry[feature]}")
-
-            entry[feature] = 1.0 if entry[feature] == '1' else 0.0  # 1=positive, 0=negative
+            entry[feature] = 1.0 if (
+                (entry["ER"] == 0 and entry["PR"] == 0)) else 0.0
 
             # --- Tumor grade ---
             feature="Tumor_grade"
@@ -77,38 +153,31 @@ class Chen_2016_overall_survival_SEERmodel_rwd_mod(logistic_regression):
                 entry[feature] = '3'
             if entry[feature]=='IV':
                 entry[feature]='4'
-            if entry[feature] not in allowed_values[feature]:
-                raise ValueError(f"Invalid {feature} value: {entry[feature]}")
 
-            entry["Tumor_grade_II"] = 1.0 if entry[feature] == '2' else 0.0
-            entry["Tumor_grade_III"] = 1.0 if entry[feature] == '3' else 0.0
-            entry["Tumor_grade_IV"] = 1.0 if entry[feature] == '4' else 0.0
+            # validate values against the allowed list
+            validate_categorical_num_feature(entry, feature, allowed_values)
+            entry["Tumor_grade_II"] = 1.0 if entry[feature] == 2 else 0.0
+            entry["Tumor_grade_III"] = 1.0 if entry[feature] == 3 else 0.0
+            entry["Tumor_grade_IV"] = 1.0 if entry[feature] == 4 else 0.0
 
             # --- Node grade ---
             feature="Node_hist_grade"
-            if feature not in entry:
-                raise ValueError(f"Missing {feature}")
-            entry[feature] = str(entry[feature])
-            if entry[feature] not in allowed_values[feature]:
-                raise ValueError(f"Invalid {feature} value: {entry[feature]}")
-
-            entry["Node_grade_1"] = 1.0 if entry[feature] in ('1', '1M') else 0.0
-            entry["Node_grade_2"] = 1.0 if entry[feature] in ('2', '2A','2B') else 0.0
+            validate_categorical_str_feature(entry, feature, allowed_values)
+            entry["Node_grade_1"] = 1.0 if entry[feature] in ('1', '1M','1A', '1AS', '1B', '1BS', '1C', '1CS','1MS') else 0.0
+            entry["Node_grade_2"] = 1.0 if entry[feature] in ('2', '2A', '2AS', '2B') else 0.0
             entry["Node_grade_3"] = 1.0 if entry[feature] in ('3', '3A', '3B', '3C') else 0.0
 
             # --- Tumor size ---
             feature="Tumor_hist_grade"
-            if feature not in entry:
-                raise ValueError(f"Missing {feature}")
-            entry[feature] = str(entry[feature])
-            if entry[feature] not in allowed_values[feature]:
-                raise ValueError(f"Invalid {feature} value: {entry[feature]}")
-
+            validate_categorical_str_feature(entry, feature, allowed_values)
             entry["Tumor_size_2"] = 1.0 if entry[feature] in ('2', '2A', '2B') else 0.0
             entry["Tumor_size_3_4"] = 1.0 if entry[feature] in ('3', '4', '4A', '4B', '4C', '4D') else 0.0
 
             # Age values expected as floats (years)
-            entry['Age'] = float(entry['Age'])
+            feature = "Age"
+            entry[feature] = float(entry[feature])
+            min_f, max_f = [0, 100]
+            validate_numerical_feature(entry, feature, min_f, max_f)
             return entry
 
         if isinstance(data, list):
@@ -120,5 +189,6 @@ if __name__ == "__main__":
     model_obj = Chen_2016_overall_survival_SEERmodel_rwd_mod()
     model_obj.get_input_parameters()
     print(model_obj.predict(
-        [{'Age': 78, 'Tumor_grade': 'II', 'Tumor_hist_grade': 2, 'Node_hist_grade': '2A', 'Hormone_receptor': '0'}, {'Age': 98, 'Tumor_grade': 'II', 'Tumor_hist_grade': 3, 'Node_hist_grade': 3, 'Hormone_receptor': 1}]
+        [{'Age': 45.6, 'Tumor_grade': 'III', 'Tumor_hist_grade': 3, 'Node_hist_grade': '2A', 'ER': '0', 'PR': '0'},
+         {'Age': 98, 'Tumor_grade': 'II', 'Tumor_hist_grade': 3, 'Node_hist_grade': 3, 'ER': '1', 'PR': '1'}]
     ))

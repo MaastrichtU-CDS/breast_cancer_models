@@ -59,4 +59,10 @@ jobs:
              fm-build dowsett_2018_metastatic_disease_rwd_mod.py ghcr.io/maastrichtu-cds/breast_cancer_models/dowsett_2018_metastatic_disease_rwd_mod:latest
              docker push ghcr.io/maastrichtu-cds/breast_cancer_models/dowsett_2018_metastatic_disease_rwd_mod:latest
 
+      - name: built and push image dowsett_2018_metastatic_disease to breast_cancer_models
+        run: |
+             cd Dowsett-2018-metastatic-disease
+             fm-build dowsett_2018_metastatic_disease.py ghcr.io/maastrichtu-cds/breast_cancer_models/dowsett_2018_metastatic_disease:latest
+             docker push ghcr.io/maastrichtu-cds/breast_cancer_models/dowsett_2018_metastatic_disease:latest
+
 #

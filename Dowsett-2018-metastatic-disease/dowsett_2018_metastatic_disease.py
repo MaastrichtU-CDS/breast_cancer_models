@@ -85,12 +85,19 @@ class dowsett_2018_metastatic_disease(model_execution):
         - input_object: a dictionary containing the input data
         """
 
-        result=0.471 * data["N_positive_node_cat"] + 0.98 * (0.164 * data["Tumor_size"]
-                                                             -0.003 * data["Tumor_size"] ** 2
-                                                             + 0.312 * data["Tumor_grade"]
-                                                             + 0.03 * data["Age"])
+        # result I
+        resultI = 0.471 * data["N_positive_node_cat"] + 0.98 * (0.164 * data["Tumor_size"]
+                                                                - 0.003 * data["Tumor_size"] ** 2
+                                                                + 0.312 * data["Tumor_grade"]
+                                                                + 0.03 * data["Age"])
 
-        return result
+        # result II
+        resultII = 0.438 * data["N_positive_node_cat"] + 0.988 * (0.093 * data["Tumor_size"]
+                                                                  - 0.001 * data["Tumor_size"] ** 2
+                                                                  + 0.375 * data["Tumor_grade"]
+                                                                  + 0.017 * data["Age"])
+
+        return resultII
 
     def predict(self, data):
         """
@@ -122,9 +129,9 @@ if __name__ == "__main__":
     model_obj.get_input_parameters()
     print(model_obj.predict(
         {
-            "N_positive_node": 2,
-            "Tumor_grade": "I",
-            "Tumor_size": "5",
-            "Age": 56
+            "N_positive_node": 9,
+            "Tumor_grade": "III",
+            "Tumor_size": "15",
+            "Age": 78
         }
     ))

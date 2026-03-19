@@ -145,7 +145,7 @@ class dowsett_2018_metastatic_disease_rwd_mod(model_execution):
 
             # --- Tumor_size ---
             feature="Tumor_size"
-            min_f,max_f=[0,25]
+            min_f,max_f=[0,100]
             validate_numerical_feature(entry, feature, min_f, max_f)
 
             return entry
@@ -210,8 +210,8 @@ if __name__ == "__main__":
     model_obj.get_input_parameters()
     print(model_obj.predict(
         {
-            "N_positive_node": 10,
-            "Tumor_grade": "I",
+            "N_positive_node": 9,
+            "Tumor_grade": 3,
             "Tumor_size": "15",
             "Age": 78
         }

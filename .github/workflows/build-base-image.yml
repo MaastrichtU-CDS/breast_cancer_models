@@ -29,17 +29,17 @@ jobs:
         run: |
           pip install git+https://github.com/MaastrichtU-BISS/FAIRmodels-model-package.git#subdirectory=package
           
-#      - name: built and push image Chen_2016_overall_survival_SEERmodel_mod to breast_cancer_models
-#        run: |
-#          cd Chen-2016-overall_survival
-#          fm-build Chen_2016_overall_survival_SEERmodel_rwd_mod.py ghcr.io/maastrichtu-cds/breast_cancer_models/chen_2016_overall_survival_seermodel_mod:latest
-#          docker push ghcr.io/maastrichtu-cds/breast_cancer_models/chen_2016_overall_survival_seermodel_mod:latest
-#
-#      - name: built and push image Chen_2016_overall_survival_NCKUmodel to breast_cancer_models
-#        run: |
-#          cd Chen-2016-overall_survival
-#          fm-build Chen_2016_overall_survival_NCKUHmodel_rwd_mod.py ghcr.io/maastrichtu-cds/breast_cancer_models/chen_2016_overall_survival_nckuhmodel_mod:latest
-#          docker push ghcr.io/maastrichtu-cds/breast_cancer_models/chen_2016_overall_survival_nckuhmodel_mod:latest
+      - name: built and push image Chen_2016_overall_survival_SEERmodel_rwd_mod to breast_cancer_models
+        run: |
+          cd Chen-2016-overall_survival
+          fm-build Chen_2016_overall_survival_SEERmodel_rwd_mod.py ghcr.io/maastrichtu-cds/breast_cancer_models/Chen_2016_overall_survival_SEERmodel_mod:latest
+          docker push ghcr.io/maastrichtu-cds/breast_cancer_models/Chen_2016_overall_survival_SEERmodel_mod:latest
+
+      - name: built and push image Chen_2016_overall_survival_NCKUmodel to breast_cancer_models
+        run: |
+          cd Chen-2016-overall_survival
+          fm-build Chen_2016_overall_survival_NCKUHmodel_rwd_mod.py ghcr.io/maastrichtu-cds/breast_cancer_models/Chen_2016_overall_survival_NCKUHmodel_mod:latest
+          docker push ghcr.io/maastrichtu-cds/breast_cancer_models/chen_2016_overall_survival_nckuhmodel_mod:latest
 #
 #      - name: built and push image Zhang_2017_lymph_node_clinical_mod to breast_cancer_models
 #        run: |
@@ -53,16 +53,16 @@ jobs:
 #             fm-build li_2011_recurrence_survival_mod.py ghcr.io/maastrichtu-cds/breast_cancer_models/li_2011_recurrence_survival_mod:latest
 #             docker push ghcr.io/maastrichtu-cds/breast_cancer_models/li_2011_recurrence_survival_mod:latest
 
-      - name: built and push image dowsett_2018_metastatic_disease_rwd_mod to breast_cancer_models
-        run: |
-             cd Dowsett-2018-metastatic-disease
-             fm-build dowsett_2018_metastatic_disease_rwd_mod.py ghcr.io/maastrichtu-cds/breast_cancer_models/dowsett_2018_metastatic_disease_rwd_mod:latest
-             docker push ghcr.io/maastrichtu-cds/breast_cancer_models/dowsett_2018_metastatic_disease_rwd_mod:latest
-
-      - name: built and push image dowsett_2018_metastatic_disease to breast_cancer_models
-        run: |
-             cd Dowsett-2018-metastatic-disease
-             fm-build dowsett_2018_metastatic_disease.py ghcr.io/maastrichtu-cds/breast_cancer_models/dowsett_2018_metastatic_disease:latest
-             docker push ghcr.io/maastrichtu-cds/breast_cancer_models/dowsett_2018_metastatic_disease:latest
+#      - name: built and push image dowsett_2018_metastatic_disease_rwd_mod to breast_cancer_models
+#        run: |
+#             cd Dowsett-2018-metastatic-disease
+#             fm-build dowsett_2018_metastatic_disease_rwd_mod.py ghcr.io/maastrichtu-cds/breast_cancer_models/dowsett_2018_metastatic_disease_rwd_mod:latest
+#             docker push ghcr.io/maastrichtu-cds/breast_cancer_models/dowsett_2018_metastatic_disease_rwd_mod:latest
+#
+#      - name: built and push image dowsett_2018_metastatic_disease to breast_cancer_models
+#        run: |
+#             cd Dowsett-2018-metastatic-disease
+#             fm-build dowsett_2018_metastatic_disease.py ghcr.io/maastrichtu-cds/breast_cancer_models/dowsett_2018_metastatic_disease:latest
+#             docker push ghcr.io/maastrichtu-cds/breast_cancer_models/dowsett_2018_metastatic_disease:latest
 
 #

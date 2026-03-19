@@ -3,7 +3,7 @@ from pyexpat import features
 
 from model_execution import logistic_regression
 
-class Chen_2016_overall_survival_SEERmodel(logistic_regression):
+class Chen_2016_overall_survival_SEERmodel_rwd_mod(logistic_regression):
     def __init__(self):
         self._model_parameters = {
             "model_uri": "https://www.omicsgroup.org/journals/validation-of-breast-cancer-survival-prediction-model-with-seer-database-2329-6771-1000174.php?aid=77460",
@@ -117,7 +117,7 @@ class Chen_2016_overall_survival_SEERmodel(logistic_regression):
             return preprocess_entry(data)
 
 if __name__ == "__main__":
-    model_obj = Chen_2016_overall_survival_SEERmodel()
+    model_obj = Chen_2016_overall_survival_SEERmodel_rwd_mod()
     model_obj.get_input_parameters()
     print(model_obj.predict(
         [{'Age': 78, 'Tumor_grade': 'II', 'Tumor_hist_grade': 2, 'Node_hist_grade': '2A', 'Hormone_receptor': '0'}, {'Age': 98, 'Tumor_grade': 'II', 'Tumor_hist_grade': 3, 'Node_hist_grade': 3, 'Hormone_receptor': 1}]
